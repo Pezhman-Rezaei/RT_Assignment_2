@@ -10,6 +10,8 @@ This repository contains a ROS (Robot Operating System) project showcasing a sim
    - Handles user input to set new goals or cancel the current goal.
    - Publishes position and velocity information.
    - Utilizes an action client to send goals to the "reaching_goal" action server.
+     
+![flow chart](https://github.com/Pezhman-Rezaei/RT_Assignment_2/assets/150551888/02fd086a-d1c0-43d9-b37a-3a7ec9351424)
 
 2. **last_target_service:**  
    - Provides a service to retrieve the last desired x and y positions set by the user.

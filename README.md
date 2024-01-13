@@ -27,7 +27,7 @@ This repository contains a ROS (Robot Operating System) project showcasing a sim
 2. Clone this repository:
 
     ```bash
-    git clone https://github.com/your-username/ros-navigation-project.git
+    git clone https://github.com/Pezhman-Rezaei/ros-navigation-project.git
     ```
 
 3. Navigate to the project directory and build the ROS packages:
@@ -38,13 +38,7 @@ This repository contains a ROS (Robot Operating System) project showcasing a sim
     source devel/setup.bash
     ```
 
-## Usage
 
-- Run the ROS nodes:
-
-    ```bash
-    rosrun your_package_name set_target_client.py
-    ```
 
 - Open additional terminals and run other nodes as needed.
 

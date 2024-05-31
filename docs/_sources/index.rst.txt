@@ -1,0 +1,278 @@
+.. RT_Assignment_2 documentation master file, created by
+   sphinx-quickstart on Tue Apr 30 02:58:13 2024.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to RT_Assignment_2's documentation!
+===========================================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+
+**************************************
+set_target_client ROS Node
+===========================
+
+Overview
+--------
+
+``set_target_client`` is a ROS (Robot Operating System) node written in Python that allows users to set a new goal position for a robot or cancel the current goal. It subscribes to the Odometry topic to retrieve the current position and velocity of the robot and publishes the position and velocity information along with the set goal position.
+
+Usage
+-----
+
+The node provides a command-line interface for users to interact with the robot. Users can input commands to set a new goal position ('I') or cancel the current goal ('O'). The node continuously listens for user input until the ROS system is shut down.
+
+ROS Topics
+----------
+
+- Subscribed Topics:
+    - ``/odom`` (``nav_msgs/Odometry``)
+        The current odometry data of the robot, including position and velocity.
+
+- Published Topics:
+    - ``/pos_vel`` (``assignment_2_2023/Vel``)
+        Position and velocity information of the robot, including current position (x, y) and linear velocity (x) and angular velocity (z).
+
+ROS Actions
+-----------
+
+- Action Clients:
+    - ``/reaching_goal`` (``assignment_2_2023/PlanningAction``)
+        Simple action client to send goals to the robot for reaching a desired position.
+
+ROS Services
+------------
+
+- Services:
+    - ``/set_target_client`` (``std_srvs/SetBool``)
+        A service to toggle the functionality of the set_target_client node.
+
+Parameters
+----------
+
+- ``/des_pos_x`` (``float``, default: ``0.0``)
+    The desired x-coordinate of the goal position.
+
+- ``/des_pos_y`` (``float``, default: ``0.0``)
+    The desired y-coordinate of the goal position.
+
+Command-Line Interface
+----------------------
+
+Upon running the node, users can interact with the robot using the following commands:
+
+- Press 'I' to set a new goal position.
+- Press 'O' to cancel the current goal.
+
+If 'I' is chosen, users will be prompted to enter the x and y coordinates for the new goal position.
+
+If 'O' is chosen, the current goal will be canceled.
+
+Dependencies
+------------
+
+- Python 3
+- ROS Kinetic/Melodic/Noetic
+- ``geometry_msgs``, ``nav_msgs``, ``actionlib``, ``assignment_2_2023``, and ``std_srvs`` ROS packages.
+
+
+.. automodule:: scripts.node_a
+  :members:
+
+
+
+===========================
+
+Node B Documentation
+=====================
+
+Overview
+--------
+
+This module initializes a ROS node named `last_target_service` and provides a service named `input` to retrieve the last target position.
+
+
+Functions
+---------
+
+The module contains the following functions:
+
+- :func:`initialize_ros_node` - Initializes the ROS node.
+- :func:`provide_input_service` - Provides the input service for retrieving the last target position.
+- :func:`result_callback` - Callback function for handling input service requests.
+- :func:`spin_node` - Spins the ROS node.
+- :func:`main` - Main function to initialize ROS node and provide the input service.
+
+
+Usage
+-----
+
+To run the node, execute the following command:
+
+.. code-block:: bash
+
+   ./node_b.py
+
+Ensure that the ROS master is running and the necessary parameters (`/des_pos_x` and `/des_pos_y`) are set.
+
+Example
+-------
+
+Here is an example of how to set the necessary parameters and call the service from another node or script:
+
+.. code-block:: python
+
+   import rospy
+   from assignment_2_2023.srv import Input
+
+   rospy.init_node('example_client')
+   rospy.set_param('/des_pos_x', 1.0)
+   rospy.set_param('/des_pos_y', 2.0)
+
+   rospy.wait_for_service('input')
+   try:
+       input_service = rospy.ServiceProxy('input', Input)
+       response = input_service()
+       rospy.loginfo(f"Last target position: x={response.input_x}, y={response.input_y}")
+   except rospy.ServiceException as e:
+       rospy.logerr(f"Service call failed: {e}")
+
+Description of the Services
+---------------------------
+
+`input` Service
+~~~~~~~~~~~~~~~
+
+This service retrieves the last target position set by the parameters `/des_pos_x` and `/des_pos_y`.
+
+Service Type:
+   - **Input**: A custom service type defined in the `assignment_2_2023` package.
+
+Request:
+   - None
+
+Response:
+   - **input_x** (float): The last target x-position.
+   - **input_y** (float): The last target y-position.
+
+
+
+.. automodule:: scripts.node_b
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   
+.. _scripts.node_c:
+
+===========================
+Node C Documentation
+=====================
+
+Overview
+--------
+
+This module implements a ROS node named `info_service` that calculates distance and average velocity based on position and velocity data received from a topic.
+
+
+Services
+--------
+
+- **info_service**: Provides distance and average velocity information.
+
+Subscribers
+-----------
+
+- **/pos_vel**: Subscribes to position and velocity data.
+
+Globals
+-------
+
+- **distance** (float): Represents the distance between current and desired positions.
+- **average_vel_x** (float): Represents the average velocity along the x-axis.
+- **current_x** (float): Represents the current x-coordinate position.
+- **current_y** (float): Represents the current y-coordinate position.
+
+Functions
+---------
+
+The module contains the following functions:
+
+- :func:`initialize_ros_node` - Initializes the ROS node.
+- :func:`provide_info_service` - Provides the information service for calculating distance and average velocity.
+- :func:`get_distance_and_average_velocity` - Calculates the distance and average velocity based on position and velocity data.
+- :func:`get_values` - Returns the calculated distance and average velocity.
+- :func:`timer_callback` - Timer callback function to log current position, distance, and average velocity.
+- :func:`spin_node` - Spins the ROS node.
+- :func:`main` - Main function to initialize ROS node and provide the information service.
+
+
+Usage
+-----
+
+To run the node, execute the following command:
+
+.. code-block:: bash
+
+   ./node_c.py
+
+Ensure that the ROS master is running and the necessary parameters (`/des_pos_x`, `/des_pos_y`, and `/window_size`) are set.
+
+Example
+-------
+
+Here is an example of how to set the necessary parameters and call the service from another node or script:
+
+.. code-block:: python
+
+   import rospy
+   from assignment_2_2023.srv import Ave_pos_vel
+
+   rospy.init_node('example_client')
+   rospy.set_param('/des_pos_x', 1.0)
+   rospy.set_param('/des_pos_y', 2.0)
+   rospy.set_param('/window_size', 10)
+
+   rospy.wait_for_service('info_service')
+   try:
+       info_service = rospy.ServiceProxy('info_service', Ave_pos_vel)
+       response = info_service()
+       rospy.loginfo(f"Distance: {response.distance}, Average Velocity: {response.average_vel_x}")
+   except rospy.ServiceException as e:
+       rospy.logerr(f"Service call failed: {e}")
+
+Description of the Services
+---------------------------
+
+`info_service` Service
+~~~~~~~~~~~~~~~~~~~~~~
+
+This service calculates and provides the distance between the current and desired positions and the average velocity based on the recent velocity data.
+
+Service Type:
+   - **Ave_pos_vel**: A custom service type defined in the `assignment_2_2023` package.
+
+Request:
+   - None
+
+Response:
+   - **distance** (float): The calculated distance.
+   - **average_vel_x** (float): The calculated average velocity along the x-axis.
+
+
+
+.. automodule:: scripts.node_c
+   :members:
+   :undoc-members:
+   :show-inheritance:
